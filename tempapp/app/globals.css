@@ -17,11 +17,34 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb)); /* This will now be black */
+  font-family: Arial, sans-serif;
+  color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb)); /* This will now be white */
+    rgb(var(--background-start-rgb));
+}
+
+button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+canvas {
+  margin-top: 20px;
 }

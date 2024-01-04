@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
+import Cookies from 'js-cookie';
+import { useEffect } from 'react';
 
 const DateRangePicker = dynamic(() => import("../components/DateRangePicker.client"));
 
@@ -12,16 +14,21 @@ interface DateRange {
   endDate: Date | null;
 }
 
+function isValidDate(value: any) {
+  const date = new Date(value);
+  return !isNaN(date.getTime());
+}
+
 export default function Home() {
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: null, endDate: null });
   const [chartData, setChartData] = useState<any[]>([]);
   const chartRef = useRef(null);
-  const [chart, setChart] = useState<Chart | null>(null); // Add this line
+  const [chart, setChart] = useState<Chart | null>(null);
 
   useEffect(() => {
     if (chartData.length > 0 && chartRef.current) {
       if (chart) {
-        chart.destroy(); // Destroy the old chart
+        chart.destroy();
       }
 
       const newChart = new Chart(chartRef.current, {
@@ -52,7 +59,7 @@ export default function Home() {
         },
       });
 
-      setChart(newChart); // Store the new chart
+      setChart(newChart);
     }
   }, [chartData]);
 
@@ -77,6 +84,7 @@ export default function Home() {
       }));
 
       setChartData(chartData);
+      Cookies.set('dateRange', JSON.stringify(dateRange)); // Save the date range to a cookie
     })
     .catch(err => {
       console.error(err);
@@ -92,14 +100,36 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center space-y-8">
+  <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+    <div className="mb-4">
       <DateRangePicker
         startDate={dateRange.startDate}
         endDate={dateRange.endDate}
         onChange={setDateRange}
+        className="w-full px-3 py-2 text-black placeholder-gray-500 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
       />
-      <button onClick={handleClick}>Fetch Data</button>
-      <canvas ref={chartRef} />
     </div>
+    <div className="flex justify-between space-x-4">
+      <button onClick={handleClick} className="bg-blue-500 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+        Fetch Data
+      </button>
+      <button onClick={() => {
+        const savedDateRange = JSON.parse(Cookies.get('dateRange') || 'null');
+        if (savedDateRange && isValidDate(savedDateRange.startDate) && isValidDate(savedDateRange.endDate)) {
+          setDateRange({
+            startDate: new Date(savedDateRange.startDate),
+            endDate: new Date(savedDateRange.endDate)
+          });
+        }
+      }} className="bg-blue-500 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
+        Load Saved Date Range
+      </button>
+    </div>
+  </div>
+  <div className="w-full max-w-md">
+    <canvas ref={chartRef} />
+  </div>
+</div>
   );
 }

@@ -11,15 +11,15 @@ const DateRangePicker = ({ startDate, endDate, onChange }) => {
   };
 
   return (
-    <div>
+    <div className="text-white">
       <h2>Select Date Range</h2>
       <div>
-        <label>Start Date: </label>
-        <DatePicker selected={startDate} onChange={handleStartDateChange} />
+        <label>Start Date: </label><br></br>
+        <DatePicker className="text-black" selected={startDate} onChange={handleStartDateChange} />
       </div>
       <div>
-        <label>End Date: </label>
-        <DatePicker selected={endDate} onChange={handleEndDateChange} />
+        <label>End Date: </label><br></br>
+        <DatePicker className="text-black" selected={endDate} onChange={handleEndDateChange} />
       </div>
     </div>
   );
