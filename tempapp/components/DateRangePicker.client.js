@@ -1,8 +1,5 @@
-// DateRangePicker.client.js
-
-import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const DateRangePicker = ({ startDate, endDate, onChange }) => {
   const handleStartDateChange = (date) => {

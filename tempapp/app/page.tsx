@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
-import { Bar } from 'react-chartjs-2';
+'use client';
 
-// Use dynamic import for DateRangePicker
+import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
+import Chart from 'chart.js/auto';
+import 'chartjs-adapter-date-fns';
+
 const DateRangePicker = dynamic(() => import("../components/DateRangePicker.client"));
 
 interface DateRange {
@@ -12,7 +14,47 @@ interface DateRange {
 
 export default function Home() {
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: null, endDate: null });
-  const [chartData, setChartData] = useState({});
+  const [chartData, setChartData] = useState<any[]>([]);
+  const chartRef = useRef(null);
+  const [chart, setChart] = useState<Chart | null>(null); // Add this line
+
+  useEffect(() => {
+    if (chartData.length > 0 && chartRef.current) {
+      if (chart) {
+        chart.destroy(); // Destroy the old chart
+      }
+
+      const newChart = new Chart(chartRef.current, {
+        type: 'bar',
+        data: {
+          datasets: [
+            {
+              label: 'Temperature',
+              data: chartData,
+              backgroundColor: 'rgba(75,192,192,0.6)',
+              borderColor: 'rgba(75,192,192,1)',
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+              },
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+      setChart(newChart); // Store the new chart
+    }
+  }, [chartData]);
 
   const handleClick = () => {
     if (!dateRange.startDate || !dateRange.endDate) {
@@ -29,23 +71,12 @@ export default function Home() {
     })
     .then(response => response.json())
     .then(data => {
-      const dates = data.days.map((day: any) => day.datetime);
-      const temps = data.days.map((day: any) => day.temp);
+      const chartData = data.days.map((day: any) => ({
+        x: day.datetime,
+        y: day.temp,
+      }));
 
-      const [chartData, setChartData] = useState({
-        labels: [],
-        datasets: [
-          {
-            label: '',
-            data: [],
-            backgroundColor: '',
-            borderColor: '',
-            borderWidth: 0,
-            hoverBackgroundColor: '',
-            hoverBorderColor: '',
-          },
-        ],
-      });
+      setChartData(chartData);
     })
     .catch(err => {
       console.error(err);
@@ -62,8 +93,13 @@ export default function Home() {
 
   return (
     <div>
-      {/* ... */}
-      <Bar data={chartData} />
+      <DateRangePicker
+        startDate={dateRange.startDate}
+        endDate={dateRange.endDate}
+        onChange={setDateRange}
+      />
+      <button onClick={handleClick}>Fetch Data</button>
+      <canvas ref={chartRef} />
     </div>
   );
 }
