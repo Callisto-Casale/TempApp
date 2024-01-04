@@ -101,6 +101,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center space-y-8">
+      <h1 className='text-white text-slate-400 text-3xl font-serif'>SkyCast</h1>
   <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
     <div className="mb-4">
       <DateRangePicker
