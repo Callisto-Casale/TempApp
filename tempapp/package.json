@@ -9,8 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.8",
+    "chart.js": "^4.4.1",
+    "graphql": "^16.8.1",
     "next": "14.0.4",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-datepicker": "^4.25.0",
     "react-dom": "^18"
   },
